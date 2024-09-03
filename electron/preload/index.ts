@@ -1,9 +1,9 @@
 import { ipcRenderer, contextBridge } from "electron";
 import { electronAPI } from '@electron-toolkit/preload'
-let net = require("net");
+// let net = require("net");
+// console.log(net, "net");
 
 
-console.log(net, "net");
 // --------- Expose some API to the Renderer process ---------
 contextBridge.exposeInMainWorld("ipcRenderer", {
   on(...args: Parameters<typeof ipcRenderer.on>) {

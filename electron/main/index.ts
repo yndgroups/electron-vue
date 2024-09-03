@@ -1,24 +1,15 @@
-import { app, BrowserWindow, shell, ipcMain } from "electron";
+import { app, BrowserWindow, shell, ipcMain, Menu } from "electron";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
 import os from "node:os";
-import Db from '../core/db'
+import bridge from 'bridge'
+
+console.log(bridge)
 
 const require = createRequire(import.meta.url);
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 let db: any
-
-// The built directory structure
-//
-// ├─┬ dist-electron
-// │ ├─┬ main
-// │ │ └── index.js    > Electron-Main
-// │ └─┬ preload
-// │   └── index.mjs   > Preload-Scripts
-// ├─┬ dist
-// │ └── index.html    > Electron-Renderer
-//
 process.env.APP_ROOT = path.join(__dirname, "../..");
 
 export const MAIN_DIST = path.join(process.env.APP_ROOT, "dist-electron");
@@ -49,6 +40,8 @@ async function createWindow() {
   win = new BrowserWindow({
     title: "Main window",
     icon: path.join(process.env.VITE_PUBLIC, "favicon.ico"),
+    // frame: false,
+    // show: false,
     webPreferences: {
       preload,
       // Warning: Enable nodeIntegration and disable contextIsolation is not secure in production
@@ -79,12 +72,21 @@ async function createWindow() {
     if (url.startsWith("https:")) shell.openExternal(url);
     return { action: "deny" };
   });
+
+  // showWindow('1')
   // win.webContents.on('will-navigate', (event, url) => { }) #344
 
   // 初始化数据库
-  db = new Db()
+  // db = new Db()
   // db.secondQuery(1)
   // db.testCreateTable()
+
+  // 隐藏菜单栏
+  // Menu.setApplicationMenu(null)
+  let sum = bridge.windSum(1, 2)
+  console.log(sum, "sum-----")
+  console.log("preload", "preload");
+  bridge.showWindow("测试原生小窗口显示");
 }
 
 app.whenReady().then(createWindow);
